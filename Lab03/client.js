@@ -92,7 +92,9 @@ function hitTarget() {
     console.log('target hit');
     socket.emit('targetHit', targetsHit++);
     moveTarget();
-    
+    clearTimeout(moveTimer);
+    moveTimer = window.setInterval(moveTarget, MOVE_INTERVAL);
+
     console.log("score: " + targetsHit);
     var scoreboard = document.getElementById("scoreboard");
     if (gameMode == "click") {
@@ -127,6 +129,7 @@ function play() {
     toggleButtons();
 
     isPlaying = true;
+    console.log("move target: play");
     moveTarget();
 }
 

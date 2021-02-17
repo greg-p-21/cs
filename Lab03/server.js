@@ -66,7 +66,7 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log(`${socket.id} disconnected!`);
         var n = null;
-        players.filter(player => player["id"] === socket.id).forEach(player => player["name"] = n);
+        players.filter(player => player["id"] === socket.id).forEach(player => n = player["name"]);
         io.emit('dis', n);
         // delete players[socket.id];
     });
@@ -104,7 +104,7 @@ io.on('connection', function (socket) {
         var n = p["name"];
         var s = p["score"];
         var d = new Date();
-        var highscore = `(${n}, ${s}, ${d.toString()})`;
+        var highscore = `(${n}, ${s}, ${d.toString()})\n`;
 
         appendToFile('highscores.txt', highscore);
     });

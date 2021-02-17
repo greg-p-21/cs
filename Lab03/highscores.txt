@@ -1,1 +1,6 @@
-Displays the highscore for each game(mike, 22, Wed Feb 17 2021 13:14:21 GMT-0500 (CST))
+Displays the highscore for each game
+(alex, 20, Wed Feb 17 2021 14:41:58 GMT-0500 (CST))
+(null, 20, Wed Feb 17 2021 14:44:29 GMT-0500 (CST))
+(null, 17, Wed Feb 17 2021 14:47:10 GMT-0500 (CST))
+(greg, 11, Wed Feb 17 2021 14:48:47 GMT-0500 (CST))
+(null, 11, Wed Feb 17 2021 14:48:53 GMT-0500 (CST))
