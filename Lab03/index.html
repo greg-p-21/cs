@@ -15,27 +15,27 @@
 
 <!-- <body onload="init()"> -->
 
-  <div class="outer">
+  <div>
+    <!-- <table></table> -->
+    <button onclick="start()" id="start" type="button">Start</button>
+    <button onclick="stop()" id="stop" disabled="true" type="reset">Stop</button>
+    <br>
+    <span id="timer">Time Remaining: 30</span>
+    <span id="scoreboard">Score: 0</span>
+    <span id="highscore">High Score: 0</span>
     <div>
-      <button onclick="start()" id="start" type="button">Start</button>
-      <button onclick="stop()" id="stop" disabled="true" type="reset">Stop</button>
-      <br>
-      <span id="timer">Time Remaining: 30</span>
-      <span id="scoreboard">Score: 0</span>
-      <span id="highscore">High Score: 0</span>
-      <div>
-        <input type="radio" name="gameMode" id="radio1" value="click" onchange="changeMode(this)" checked>
-        <label for="click">Click</label>
-        <input type="radio" name="gameMode" id="radio2" value="mouseover" onchange="changeMode(this)">
-        <label for="click">Touch</label>
-        <label>Target Size</label>
-        <input type="range" id="circleSize" min="8" max="80" value="40">
-      </div>
-    </div>
-    <div>
-      <table></table>
+      <input type="radio" name="gameMode" id="radio1" value="click" onchange="changeMode(this)" checked>
+      <label for="click">Click</label>
+      <input type="radio" name="gameMode" id="radio2" value="mouseover" onchange="changeMode(this)">
+      <label for="click">Touch</label>
+      <label>Target Size</label>
+      <input type="range" id="circleSize" min="8" max="80" value="40">
     </div>
   </div>
+  <div id="tableDiv">
+    <table></table>
+  </div>
+  <div id="initialTimer"></div>
   
   
 

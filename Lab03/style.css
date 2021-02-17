@@ -6,17 +6,27 @@ body {
     height: 100%;
     margin:0;
 }
-.outer {
+/* .outer {
     display:inline-block;
-}
+} */
 div {
     /* https://stackoverflow.com/questions/2861247/center-aligning-a-fixed-position-div */
-    /* position: fixed; */
-    /* left: 50%; */
-    /* transform: translate(-50%, 0); */
+    position: fixed; 
+    left: 50%;
+    transform: translate(-50%, 0);
 
     border-color: red;
     border-style: dotted;
+}
+
+#tableDiv {
+    left: 10%;
+    transform: translate(-20%, 0);
+}
+
+#initialTimer {
+    left: 70%;
+    transform: translate(-70%, 0);
 }
 
 button {
@@ -25,5 +35,5 @@ button {
 }
 
 svg {
-    background-color: green;
+    background-color: #cce6ff;
 }

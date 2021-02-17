@@ -3,19 +3,24 @@ var socket = io();
 
 const ALLOTED_TIME = 30;
 const MOVE_INTERVAL = 1000;
+const COUNTDOWN_TIME = 5;
 
 var highScore = 0;
 var targetsHit = 0;
 var attemptedClicks = 0;
 
 var isPlaying = false;
-var timeLeft = ALLOTED_TIME;
 
 var gameMode = "click";
 
 var moveTimer = null;
 var gameTimer = null;
+var countDownTimer = null;
 
+var timeLeft = ALLOTED_TIME;
+var countDownLeft = COUNTDOWN_TIME;
+
+var targetLocs = null;
 
 function init() {
 
@@ -61,6 +66,7 @@ function init() {
 
     getName();
     socket.on('update', players => {
+        document.querySelector("table").innerHTML = '';
         console.log("received "+ players);
         let table = document.querySelector("table");
         let data = Object.keys(players[0]);
@@ -68,12 +74,25 @@ function init() {
         generateTableHead(table, data);
     });
 
+    // recieve target locations
+    socket.on('locations', function(locs) {
+        targetLocs = locs;
+
+        // start countdown and begin game
+        countDownTimer = setInterval(initialCountDown, 1000);
+    });
+
+    socket.on('dis', function(n) {
+        alert(`${n} has left the game!`);
+        stop();
+    });
 }
+
 function hitTarget() {
-    targetsHit++;
+    console.log('target hit');
+    socket.emit('targetHit', targetsHit++);
     moveTarget();
-    clearTimeout(moveTimer);
-    moveTimer = window.setInterval(moveTarget, MOVE_INTERVAL);
+    
     console.log("score: " + targetsHit);
     var scoreboard = document.getElementById("scoreboard");
     if (gameMode == "click") {
@@ -91,7 +110,12 @@ function getName() {
 }
 
 function start() {
-    console.log("start");
+    // start game
+    socket.emit('startGame');
+}
+
+function play() {
+    console.log("play");
     // init variables
     targetsHit = 0;
     attemptedClicks = 0;
@@ -117,6 +141,7 @@ function stop() {
         document.getElementById("highscore").innerHTML = "High Score: " + highScore;
     }
     alert("Final Score " + targetsHit)
+    socket.emit('gameOver');
 }
 
 function toggleButtons() {
@@ -141,13 +166,29 @@ function toggleButtons() {
     }
 }
 
-function moveTarget() {
+function moveTarget(cx, cy) {
     var target = document.getElementById("target");
     target.style.display = "block";
     // target.style.display = "none";
-    target.setAttribute("cx", Math.random() * window.innerWidth);
-    target.setAttribute("cy", Math.random() * window.innerHeight);
+    newTarget = targetLocs.pop()
+    cx = newTarget[0];
+    cy = newTarget[1];
+    console.log(cx+','+cy);
+    target.setAttribute("cx", cx);
+    target.setAttribute("cy", cy);
 }
+
+function initialCountDown() {
+    var time = document.getElementById("initialTimer");
+    time.innerHTML = "Time till game starts: " + --countDownLeft;
+    if (countDownLeft == 0) {
+        clearTimeout(countDownTimer);
+        countDownLeft = COUNTDOWN_TIME;
+        time.innerHTML = '';
+        play();
+    }
+}
+
 function countDown() {
     var time = document.getElementById("timer");
     time.innerHTML = "Time Remaining: " + --timeLeft;

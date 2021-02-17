@@ -3,13 +3,14 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 15394; // 15394 is the port number (you'll change this to the last 5 digits of your alpha)
 
+const WINDOW_HEIGHT = 500;
+const WINDOW_WIDTH  = 1000;
+
+
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-
-// app.get('/dog.jpg', function (req, res) {
-//     res.sendFile(__dirname + '/dog.jpg');
-// });
 
 app.get('/client.js', function (req, res) {
     res.sendFile(__dirname + '/client.js');
@@ -25,8 +26,7 @@ app.get('/favicon.jpeg', function (req, res) {
     res.sendFile(__dirname + '/favicon.jpeg');
 });
 
-// var counter = 0; // stored server side
-// var scores = {}; // 
+
 var players = [];
 io.on('connection', function (socket) {
 
@@ -57,14 +57,56 @@ io.on('connection', function (socket) {
     // Event Listeners 'nameFromMe'
     socket.on('getName', function (n) {
         console.log("name is " + n);
-        players.filter(player => player["id"] === socket.id).forEach(player => player["name"] = n)
+        players.filter(player => player["id"] === socket.id).forEach(player => player["name"] = n);
         console.log(players);
         io.emit('update', players);
     });
+
     // Event Listeners 'disconnect'
     socket.on('disconnect', function () {
         console.log(`${socket.id} disconnected!`);
+        var n = null;
+        players.filter(player => player["id"] === socket.id).forEach(player => player["name"] = n);
+        io.emit('dis', n);
         // delete players[socket.id];
+    });
+
+    // Event Listeners 'startGame'
+    socket.on('startGame', function() {
+        // create long list of x,y pairs 
+        targetLocs = []
+        for (i=0; i<200; i++) {
+            cx = Math.random() * WINDOW_WIDTH;
+            cy = Math.random() * WINDOW_HEIGHT;   
+            targetLocs.push([cx, cy]);
+        }
+
+        // send list to client 
+        io.emit('locations', targetLocs);
+    });
+
+    // Target hit
+    socket.on('targetHit', function(targetHits) {
+        players.filter(player => player["id"] === socket.id).forEach(player => player["score"] = targetHits);
+        io.emit('update', players);
+    });
+
+    // Game over
+    socket.on('gameOver', function() {
+        var max = 0;
+        var p = null;
+        players.forEach(player => {
+            if (player["score"] > max) {
+                max = player["score"];
+                p = player;
+            } 
+        });
+        var n = p["name"];
+        var s = p["score"];
+        var d = new Date();
+        var highscore = `(${n}, ${s}, ${d.toString()})`;
+
+        appendToFile('highscores.txt', highscore);
     });
 });
 
@@ -72,3 +114,10 @@ io.on('connection', function (socket) {
 http.listen(port, '0.0.0.0', function () {
     console.log('Listening on port ' + port);
 });
+
+var fs = require('fs')
+function appendToFile(file, data) {
+	fs.appendFile(file, data, function (err) {
+		if (err) console.log("ERROR writing " + data + ":" + err);
+	});
+}
