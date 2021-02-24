@@ -1,3 +1,5 @@
+// const { listen } = require("engine.io");
+
 // Gregory Polmatier
 var socket = io();
 
@@ -37,10 +39,40 @@ function init() {
     }, false);
     /********************************/
 
-    // get name 
-    socket.emit('newName', prompt("Enter Name", "Greg"));
+}
 
+// vvvvvvvvvvvvvvvvvvvvv   Setting Name   vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+function submitName() {
+    myName = document.getElementById("name").value;
+    isPlaying = true;
 
+    document.getElementById("enterNameDiv").style.display = "none";
+    document.getElementById("phase1").style.display = "block";
+
+    socket.emit('setName', myName);
+}
+
+socket.on('teamLists', function (team1, team2, unass) {
+    var t1list = document.getElementById("t1list");
+    t1list.innerHTML = "";
+    addTeamList(team1, t1list);
+
+    var t2list = document.getElementById("t2list");
+    t2list.innerHTML = "";
+    addTeamList(team2, t2list);
+    
+
+    var unlist = document.getElementById("unlist");
+    unlist.innerHTML = "";
+    addTeamList(unass, unlist);
+});
+
+function addTeamList(team, list) {
+    team.forEach(function(player) {
+        var entry = document.createElement('li');
+        entry.appendChild(document.createTextNode(player.name));
+        list.appendChild(entry);
+    });
 }
 
 function setColor(colorSelectBox) {

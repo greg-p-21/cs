@@ -3,7 +3,9 @@
 <!-- https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse -->
 
 <head>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="client.js"></script>
+    
 </head>
 
 <body onload="init()">
@@ -28,7 +30,23 @@
     <input type="button" value="save" id="btn" size="30" onclick="save()" style="position:absolute;top:55%;left:10%;">
     <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:55%;left:15%;">
 
-    
+    <!-- Name Entry -->
+    <div id="enterNameDiv">
+        <label>Name:</label>
+        <input id="name" type="text">
+        <button type="button" onclick="submitName()">Join Game</button>
+    </div>
+
+    <div id="phase1">
+        <ul>
+            <li>Team 1<ul id="t1list"></ul></li>
+            <li>Team 2<ul id="t2list"></ul></li>
+            <li>Unassigned<ul id="unlist"></ul></li>
+        </ul>
+        
+        
+        
+    </div>
 </body>
 
 </html>

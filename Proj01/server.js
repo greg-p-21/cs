@@ -8,6 +8,10 @@ const TEAM_UN = 0;
 const TEAM_1  = 1;
 const TEAM_2  = 2;
 
+var team1 = [];
+var team2 = [];
+var unass = [];
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -21,24 +25,23 @@ app.get('/style.css', function (req, res) {
     res.sendFile(__dirname + '/style.css');
 });
 
-var players = [];
-
 // I used a class but you could have used arrays, associative arrays, or something else
 class Player {
-    constructor(socketID, name, team) {
+    constructor(socketID, name) {
         this.socketID = socketID;
-        this.team = team;
+        this.name = name;
         this.active = true;
     }
 }
+
 
 io.on('connection', function (socket) {
     // console.log(socket.id + "connected!");
 
     socket.on('setName', function (name) {
         // Add to players array
-        players.push(new Player(socket.id, name, TEAM_UN));
-        io.emit('allNames', players);
+        unass.push(new Player(socket.id, name));
+        io.emit('teamLists', team1, team2, unass);
     });
 
     socket.on('start', function () {
