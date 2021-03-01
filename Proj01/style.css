@@ -1,0 +1,12 @@
+div {
+    display:inline-block;
+}
+
+#canvas {
+    display: none;
+}
+
+#guessInput {
+    position:absolute;
+    right:10;
+}

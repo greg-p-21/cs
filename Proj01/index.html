@@ -5,47 +5,89 @@
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js"></script>
-    
+    <link rel=icon type="image/jpeg" href="/favicon.jpeg" />
 </head>
 
 <body onload="init()">
-    <canvas id="paintCanvas" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
-    <div style="position:absolute;top:12%;left:43%;">Choose Color</div>
-    <div style="position:absolute;top:15%;left:45%;width:10px;height:10px;background:green;" id="green"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:15%;left:46%;width:10px;height:10px;background:blue;" id="blue"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:15%;left:47%;width:10px;height:10px;background:red;" id="red"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:17%;left:45%;width:10px;height:10px;background:yellow;" id="yellow"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:17%;left:46%;width:10px;height:10px;background:orange;" id="orange"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:17%;left:47%;width:10px;height:10px;background:black;" id="black"
-        onclick="setColor(this)"></div>
-    <div style="position:absolute;top:20%;left:43%;">Eraser</div>
-    <div style="position:absolute;top:22%;left:45%;width:15px;height:15px;background:white;border:2px solid;" id="white"
-        onclick="setColor(this)"></div>
-    <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
-    <input type="button" value="save" id="btn" size="30" onclick="save()" style="position:absolute;top:55%;left:10%;">
-    <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:55%;left:15%;">
+    
 
-    <!-- Name Entry -->
-    <div id="enterNameDiv">
-        <label>Name:</label>
-        <input id="name" type="text">
-        <button type="button" onclick="submitName()">Join Game</button>
+
+    <div id="teamSelect">
+        <input type="text" id="name">
+        <button type="button" id="addplayerbutton" onclick="addPlayer()">Create player</button>
+        <button type="button" id="startButton">Start Game</button>
+        <p>Team 1</p>
+        <ul class="team1" id="team1">
+            <!-- <li class="dropzone" id='0' draggable="true">T1 Player 1</li>
+            <li class="dropzone" id='1' draggable="true">T1 Player 2</li>
+            <li class="dropzone" id='2' draggable="true">T1 Player 3</li>
+            <li class="dropzone" id='3' draggable="true">T1 Player 4</li> -->
+            <li class="dropzone" id='4' draggable="false">Drag Here to Add!</li>
+        </ul>
+        <p>Team 2</p>
+        <ul class="team2" id="team2">
+            <!-- <li class="dropzone" id='0' draggable="true">T2 Player 1</li>
+            <li class="dropzone" id='1' draggable="true">T2 Player 2</li>
+            <li class="dropzone" id='2' draggable="true">T2 Player 3</li> -->
+            <li class="dropzone" id='3' draggable="false">Drag Here to Add!</li>
+        </ul>
+        <p>Unassigned</p>
+        <ul class="unassigned" id="unassigned">
+
+        
+        <p>Testing</p>
     </div>
 
-    <div id="phase1">
-        <ul>
-            <li>Team 1<ul id="t1list"></ul></li>
-            <li>Team 2<ul id="t2list"></ul></li>
-            <li>Unassigned<ul id="unlist"></ul></li>
+    <div id="phase2">
+        <!-- TEAM Scoreboard -->
+        <ul class="scoreboard" id="scoreboardList">
+            <lh>Scoreboard</lh>
+            <li>Team 1: <span id="t1score"></span></li>
+            <li>Team 2: <span id="t2score"></span></li>
         </ul>
+        <!-- Timer -->
+        <span id="timer"></span>
+        <!-- a list of their team's guesses -->
+        <ul class="guesses" id="guessList"></ul>
+        <div id="drawer">
+            <!-- Drawer: random word -->
+            <span id="randomWord"></span>
+            <!-- Drawer: a canvas -->
+            <div class="drawCanvas">
+                <canvas id="paintCanvas" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
+                <div style="position:absolute;top:12%;left:43%;">Choose Color</div>
+                <div style="position:absolute;top:15%;left:45%;width:10px;height:10px;background:green;" id="green"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:15%;left:46%;width:10px;height:10px;background:blue;" id="blue"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:15%;left:47%;width:10px;height:10px;background:red;" id="red"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:17%;left:45%;width:10px;height:10px;background:yellow;" id="yellow"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:17%;left:46%;width:10px;height:10px;background:orange;" id="orange"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:17%;left:47%;width:10px;height:10px;background:black;" id="black"
+                    onclick="setColor(this)"></div>
+                <div style="position:absolute;top:22%;left:45%;width:15px;height:15px;background:white;border:2px solid;" id="white"
+                    onclick="setColor(this)"></div>
+                <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
+                <input type="button" value="save" id="btn" size="30" onclick="save()" style="position:absolute;top:55%;left:10%;">
+            </div>
+            <!-- Drawer: a skip button -->
+            <button type="button" id="skipButton">Skip</button>
+            <!-- Drawer: a correct guess button -->
+            <button type="button" id="correct" >Correct Guess</button>
+        </div>
         
-        
-        
+        <container id="guesser">
+            <!-- Guesser: a canvas -->
+            <canvas id="displayCanvas" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
+            <!-- Guesser: a text input box -->
+            <div id="guessInput">
+                <input type="text" id="guessText">
+                <button type="button" onclick="submitGuess()">submit</button>
+            </div>
+        </container>
     </div>
 </body>
 
