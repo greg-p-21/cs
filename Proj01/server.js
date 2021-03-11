@@ -29,6 +29,9 @@ var t2score = 0;
 
 var words = [];
 
+var t1_rounds = [];
+var t2_rounds = [];
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
@@ -45,22 +48,6 @@ app.get('/words.txt', function (req, res) {
     res.sendFile(__dirname + '/words.txt');
 });
 
-// var rl = readline.createInterface({
-// 	input: fs.createReadStream('/words.txt'),
-// 	output: process.stdout,
-// 	terminal: false
-// });
-
-
-// I used a class but you could have used arrays, associative arrays, or something else
-// class Player {
-//     constructor(socketID, name) {
-//         this.socketID = socketID;
-//         this.name = name;
-//         this.active = true;
-//     }
-// }
-
 
 io.on('connection', function (socket) {
     // console.log(socket.id + "connected!");
@@ -72,6 +59,12 @@ io.on('connection', function (socket) {
         sockets[name] = socket.id;
         console.log(team1, team2, unass);
         io.emit('teamLists', team1, team2, unass);
+    });
+
+    socket.on("getInfo", function () {
+        
+
+        socket.emit("info", team_num, n);
     });
 
     socket.on('changeTeam', function (t1, t2, un) {
@@ -109,16 +102,29 @@ io.on('connection', function (socket) {
         io.emit("startGame", words, [t1drawer, t2drawer]);
     });
 
-    socket.on("skip", function () {
+    socket.on("skip", function (entry) {
+        if (socket.id === t2drawer) {
+            t2_rounds.push(entry);
+        } else {
+            t1_rounds.push(entry);
+        }
+
         io.emit("clear");
     })
 
-    socket.on("correct", function() {
+    socket.on("correct", function(entry) {
         if (socket.id === t1drawer) {
             t1score++;
         } else {
             t2score++;
         }
+
+        if (socket.id === t2drawer) {
+            t2_rounds.push(entry);
+        } else {
+            t1_rounds.push(entry);
+        }
+
         io.emit("updateScore", t1score, t2score);
         io.emit("clear");
     });
@@ -140,10 +146,40 @@ io.on('connection', function (socket) {
         } else {
             team2ids.forEach(id => io.to(id).emit("guessAttempt", guess));
         }
+    });
+
+    socket.on("gameover", function () {
+        console.log("gameover");
+
+        socket.emit("gameSummary", t1_rounds, t2_rounds);
+    });
+
+    // Listen for image and filename
+    socket.on('img', function (dataURL, filename) {
+        console.log("Received image  " + dataURL)
+        var base64Data = dataURL.replace(/^data:image\/png;base64,/, "");
+
+        fs.writeFile(filename, base64Data, 'base64', function (err) {
+            console.log(err);
+        });
     })
 
-});
+    // Send the requested file
+    socket.on('requestImg', function (filename) {
 
+        console.log("Client Requests Image " + filename)
+        fs.readFile(filename, 'base64', function (err, data) {
+            if (err) {
+                console.log(err);
+                // Might be a good idea to send a response if the file doesn't exist
+                io.emit('img', "File not found")
+            } else {
+                io.emit('img', "data:image/png;base64," + data.toString())
+            }
+        });
+    });
+
+});
 
 function readFromFile(file) {
 	fs.readFile(file, function (err, data) {
@@ -151,11 +187,6 @@ function readFromFile(file) {
         words = String(data).split('\n');
 		console.log(words);
 	});
-}
-
-function sortPlayers() {
-    // https://flaviocopes.com/how-to-sort-array-of-objects-by-property-javascript/
-    players.sort((a, b) => (a.score < b.score) ? 1 : -1);
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

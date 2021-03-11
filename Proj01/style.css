@@ -1,12 +1,64 @@
-div {
-    display:inline-block;
+html, body, .grid-container { 
+    height: 100%; 
+    margin: 10px; 
+    /* background-color: #0F5257; */
 }
 
-#canvas {
-    display: none;
+/* https://www.w3schools.com/css/css_align.asp */
+.center {
+    margin: auto;
+    width: 20%;
+    border: 3px solid #4c7cb3;
+    padding: 10px;
 }
 
-#guessInput {
-    position:absolute;
-    right:10;
+#scoreboardList {
+    border: 3px solid #9C92A3;
+    width: 50%;
+}
+
+#guessList {
+    border: 3px solid #0F5257;
+    width: 50%;
+}
+
+#wordp {
+    font-size: large;
+}
+
+li.dropzone {
+    background-color: rgba(185, 185, 185, 0.514);
+    width: 70%;
+    margin: 5px;
+    border: 5px black;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 0.6fr 0.8fr 1.6fr;
+    grid-template-rows: 1.6fr;
+    gap: 5px 5px;
+    grid-template-areas:
+      ". . .";
+}
+
+#phase2 {
+    margin: auto;
+    width: 70%;
+    padding: 10px;
+}
+
+/* https://www.w3schools.com/css/css_list.asp */
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.row {
+    display: flex;
+}
+
+.column {
+    flex: 50%;
 }

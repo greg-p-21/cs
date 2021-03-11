@@ -20,6 +20,10 @@ var t2scoreBoard = null;
 var randomWord = null;
 var words = [];
 
+var fileNum = 0;
+var teamNum = 0;
+var myname = null;
+
 // Draw on Canvas Starter Code From:
 // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 var canvas, guessCanvas, guessCTX, ctx, flag = false,
@@ -39,10 +43,13 @@ function init() {
 
     randomWord = document.getElementById("randomWord");
 
-    // for right now
+    // testing
+    // document.getElementById("teamSelect").style.display = "none";
+
     document.getElementById("phase2").style.display = "none";
     document.getElementById("drawer").style.display = "none";
     document.getElementById("guesser").style.display = "none";
+    document.getElementById("results").style.display = "none";
 
 
     /* canvas stuff */
@@ -74,15 +81,30 @@ function init() {
     };
 
     document.getElementById("correct").onclick = function() {
-        socket.emit("correct");
-        words.pop();
+        socket.emit("correct", sendEntry(false));
+        randomWord.innerHTML = words.pop();
     };
 
     document.getElementById("skipButton").onclick = function() {
+        socket.emit("skip", sendEntry(true));
         randomWord.innerHTML = words.pop();
-        socket.emit("skip");
     };
 }
+
+function sendEntry(skip) {
+    var entry = {
+        'dataURL': canvas.toDataURL(),
+        'word': randomWord.innerHTML,
+        'guesses': makeArrayFromUL("guessList"),
+        'skipped': skip
+    };
+    console.log(entry);
+    return entry;
+}
+
+socket.on("info", function(teamnum, name) {
+
+});
 
 socket.on("clear", function() {
     console.log("clear");
@@ -184,9 +206,13 @@ socket.on("newDraw", function(dsx, dsy, dcx, dcy, coler) {
     guessDraw();
 });
 
+socket.on("gameSummary", function (t1_rounds, t2_rounds) {
+    // turn into actual images
+
+});
+
 function countDown() {
     console.log("countdown");
-
 
     var time = document.getElementById("timer");
     time.innerHTML = "Time Remaining: " + --timeLeft;
@@ -195,6 +221,8 @@ function countDown() {
         time.innerHTML = "Time Remaining: " + timeLeft;
 
         clearTimeout(timer);
+        document.getElementById("phase2").style = "none";
+        document.getElementById("results").style = "";
 
         socket.emit("gameover")
     }
@@ -291,6 +319,17 @@ socket.on('teamLists', function (team1, team2, unass) {
     addDragItem("team2");
     // addDragItem("unassigned");
 });
+
+function makeArrayFromUL(listname) {
+    var list = document.getElementById(listname);
+    arr = [];
+
+    for (var i = 0; i < list.children.length; i++) {
+        var child = list.children[i];
+        arr.push(child.innerHTML);
+    }
+    return arr;
+}
 
 function getTeamFromList(listname) {
     var list = document.getElementById(listname);
@@ -442,6 +481,29 @@ function findxy(res, e) {
             drawCurrentX = e.clientX - canvas.offsetLeft;
             drawCurrentY = e.clientY - canvas.offsetTop;
             draw();
+        }
+    }
+}
+
+// https://www.valentinog.com/blog/html-table/
+function generateTableHead(table, data) {
+    let thead = table.createTHead();
+    let row = thead.insertRow();
+    for (let key of data) {
+        let th = document.createElement("th");
+        let text = document.createTextNode(key);
+        th.appendChild(text);
+        row.appendChild(th);
+    }
+}
+//   https://www.valentinog.com/blog/html-table/
+function generateTable(table, data) {
+    for (let element of data) {
+        let row = table.insertRow();
+        for (key in element) {
+        let cell = row.insertCell();
+        let text = document.createTextNode(element[key]);
+        cell.appendChild(text);
         }
     }
 }
