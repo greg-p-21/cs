@@ -99,24 +99,47 @@
                     </div>
                 </container>
             </div>
-            
         </div>
-        
-        
-        
-        
-        
     </div>
 
-    <div id="results" class="row">
-        <div class="column" id="t1col">
-            <h3>team1 1</h3>
-            <table id="t1_table"></table>
+    <div id="results" >
+        <button type="button" onclick="newRound()">New Round</button>
+        <button type="button" onclick="restart()">Restart Game</button>
+        <div class="row" id="tables">
+            <div class="column" id="t1col">
+                <h3>Team 1</h3>
+                <table id="t1_table">
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Guesses</th>
+                            <th>Skipped</th>
+                            <th>Drawing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    
+                    </tbody>
+                </table>
+            </div>
+            <div class="column" id="t2col">
+                <h3>Team 2</h3>
+                <table id="t2_table">
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Guesses</th>
+                            <th>Skipped</th>
+                            <th>Drawing</th>
+                        </tr>
+                        <tbody>
+    
+                        </tbody>
+                    </thead>
+                </table>
+            </div>
         </div>
-        <div class="column" id="t2col">
-            <h3>Team 2</h3>
-            <table id="t2_table"></table>
-        </div>
+        
     </div>
 </body>
 

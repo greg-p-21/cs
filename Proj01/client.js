@@ -27,6 +27,11 @@ var myname = null;
 var t1Canvases = [];
 var t2Canvases = [];
 
+var t1_r = [];
+var t2_r = [];
+
+var totalCanvi = 0;
+
 // Draw on Canvas Starter Code From:
 // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 var canvas, guessCanvas, guessCTX, ctx, flag = false,
@@ -39,13 +44,45 @@ var canvas, guessCanvas, guessCTX, ctx, flag = false,
 var color = "black",
     strokeWidth = 2;
 
+function reset() {
+    timer = null;
+    timeLeft = ALLOTED_TIME;
+
+    t1score = 0;
+    t2score = 0;
+
+    words = [];
+
+    fileNum = 0;
+    teamNum = 0;
+    myname = null;
+
+    t1Canvases = [];
+    t2Canvases = [];
+
+    t1_r = [];
+    t2_r = [];
+
+    totalCanvi = 0;
+    document.getElementById("phase2").style.display = "none";
+    document.getElementById("drawer").style.display = "none";
+    document.getElementById("guesser").style.display = "none";
+    document.getElementById("results").style.display = "none";
+    document.getElementById("teamSelect").style.display="none";
+
+    randomWord.innerHTML = "";
+    erase();
+    var tables = document.querySelectorAll("table");
+    console.log(tables);
+    tables.forEach(t => resetTable(t));
+}
+
 function init() {
     document.getElementById("startButton").style.display = "none";
     t1scoreBoard = document.getElementById("t1score");
     t2scoreBoard = document.getElementById("t2score");
 
     randomWord = document.getElementById("randomWord");
-
     // testing
     // document.getElementById("teamSelect").style.display = "none";
 
@@ -124,6 +161,15 @@ function addTeamList(team, list) {
     });
 }
 
+// https://stackoverflow.com/questions/7271490/delete-all-rows-in-an-html-table
+function resetTable(table) {
+    var tableHeaderRowCount = 1;
+    var rowCount = table.rows.length;
+    for (var i = tableHeaderRowCount; i < rowCount; i++) {
+        table.deleteRow(tableHeaderRowCount);
+    }
+}
+
 socket.on("showStart", function() {
     console.log("showstart");
     document.getElementById("startButton").style.display = "inline";
@@ -132,8 +178,9 @@ socket.on("showStart", function() {
 socket.on("startGame", function(ws, drawSockets) {
     console.log("client game started");
     // hide team select and show appropriate phase II
-    document.getElementById("teamSelect").style.display= "none";
+    reset();
     document.getElementById("phase2").style.display = "inline";
+    
 
     if (drawSockets.includes(socket.id)) {
         document.getElementById("drawer").style.display = "inline";
@@ -149,6 +196,8 @@ socket.on("startGame", function(ws, drawSockets) {
 
     // get words
     words = ws;
+
+    randomWord.innerHTML ="";
 
     if (drawSockets.includes(socket.id)) {
         // display drawer div
@@ -206,39 +255,56 @@ socket.on("newDraw", function(dsx, dsy, dcx, dcy, coler) {
 });
 
 socket.on("gameSummary", function (t1_rounds, t2_rounds) {
-    // make table   
-    let table1 = document.getElementById("t1_table");
-    let table2 = document.getElementById("t2_table");
-    let data1 = Object.keys(t1_rounds[0]);
-    let data2 = Object.keys(t2_rounds[0]);
+    t1_r = t1_rounds;
+    t2_r = t2_rounds;
+    totalCanvi = t1_rounds.length + t2_rounds.length;
 
     // get all images
+    console.log(t1_rounds);
     t1_rounds.forEach(entry => {
-        fname = entry['filename'];
+        let fname = entry['filename'];
+        console.log("foreach", entry);
         request(fname,1);
     });
 
+    console.log(t2_rounds)
     t2_rounds.forEach(entry => {
-        fname = entry['filename'];
+        let fname = entry['filename'];
+        console.log("foreach2", entry);
         request(fname,2);
     });
-
-    generateTable(table1, t1_rounds, t1Canvases);
-    // generateTableHead(table1, data1);
-
-    generateTable(table2, t2_rounds, t2Canvases);
-    // generateTableHead(table2, data2);
 });
+
+
+function makeTables() {
+    // make table   
+    let table1 = document.getElementById("t1_table");
+    let table2 = document.getElementById("t2_table");
+
+    console.log(t1Canvases, t2Canvases);
+    generateTable(table1, t1_r, t1Canvases);
+    // generateTableHead(table1, data1);
+    console.log("got past generate table 1");
+
+    generateTable(table2, t2_r, t2Canvases);
+    // generateTableHead(table2, data2);
+    console.log("got past generate table 2");
+}
 
 //   https://www.valentinog.com/blog/html-table/
 function generateTable(table, data, canvi) {
     for (let element of data) {
+        console.log("element", element);
         let row = table.insertRow();
         for (key in element) {
+            console.log("key:", key);
             let cell = row.insertCell();
             if (key == "filename") {
-                console.log('canvi', canvi)
-                cell.appendChild(canvi.shift());
+                console.log("canvi", canvi);
+                console.log("at zero", canvi[0]);
+                let i = canvi.shift();
+                console.log('add to table', i);
+                cell.appendChild(i);
             } else {
                 let text = document.createTextNode(element[key]);
                 cell.appendChild(text);
@@ -253,16 +319,21 @@ function request(filename, tnum) {
 }
 
 socket.on('img', function (img, tnum) {
-    console.log("received img from server: " + img);
-    var newCanvas = document.createElement('canvas');
-    newCanvas.src = img;
-    newCanvas.width = "400";
-    newCanvas.height = "400";
-    newCanvas.className = "pastCanvi"
-    newCanvas.style.border = "2px solid";
-    console.log('canvas', newCanvas);
-    if (tnum == 1) {t1Canvases.push(newCanvas);}
-    else {t2Canvases.push(newCanvas);}
+    // console.log("received img from server: " + img);
+    var canvasimg = document.createElement('img');
+    canvasimg.src = img;
+    // canvasimg.width = "300";
+    // canvasimg.height = "400";
+    // canvasimg.className = "pastCanvi"
+    // canvasimg.style.border = "2px solid";
+    console.log('newimg', canvasimg);
+    if (tnum == 1) {t1Canvases.push(canvasimg);}
+    else {t2Canvases.push(canvasimg);}
+    console.log("canvas added");
+    totalCanvi--;
+    if (totalCanvi == 0) {
+        makeTables();
+    }
 });
 
 function countDown() {
@@ -495,7 +566,7 @@ function erase() {
     // if (m) {
     ctx.clearRect(0, 0, w, h);
     guessCTX.clearRect(0, 0, w, h);
-    document.getElementById("canvasimg").style.display = "none";
+    // document.getElementById("canvasimg").style.display = "none"; 
     // }
 }
 
@@ -552,7 +623,19 @@ function generateTableHead(table, data) {
 
 function send() {
     var dataURL = canvas.toDataURL();
-    console.log("send image " + dataURL)
-    socket.emit('img', dataURL, filename)
+    console.log("send image " + dataURL);
+    socket.emit('img', dataURL, filename);
 }
 
+function newRound() {
+    socket.emit('newRound');
+}
+
+function restart() {
+    socket.emit("restartGame");
+}
+
+socket.on("refresh", function() {
+    location.reload();
+});
+    

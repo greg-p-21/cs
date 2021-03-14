@@ -59,11 +59,26 @@ ul {
     display: flex;
 }
 
-table, th, td {
-    border: 1px solid black;
-}
-
 .column {
     flex: 50%;
 }
 
+/* https://www.w3schools.com/css/css_table_style.asp */
+th {
+    text-align: center;
+    height: 50px;
+    background-color: rgb(212, 147, 147);
+}
+
+th, td {
+    padding:15px;
+}
+table, th, td {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
