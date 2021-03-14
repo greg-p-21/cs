@@ -24,6 +24,9 @@ var fileNum = 0;
 var teamNum = 0;
 var myname = null;
 
+var t1Canvases = [];
+var t2Canvases = [];
+
 // Draw on Canvas Starter Code From:
 // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 var canvas, guessCanvas, guessCTX, ctx, flag = false,
@@ -81,30 +84,26 @@ function init() {
     };
 
     document.getElementById("correct").onclick = function() {
-        socket.emit("correct", sendEntry(false));
+        socket.emit("correct", sendEntry(false), canvas.toDataURL());
         randomWord.innerHTML = words.pop();
     };
 
     document.getElementById("skipButton").onclick = function() {
-        socket.emit("skip", sendEntry(true));
+        socket.emit("skip", sendEntry(true), canvas.toDataURL());
         randomWord.innerHTML = words.pop();
     };
 }
 
 function sendEntry(skip) {
     var entry = {
-        'dataURL': canvas.toDataURL(),
         'word': randomWord.innerHTML,
-        'guesses': makeArrayFromUL("guessList"),
-        'skipped': skip
+        'guesses': makeArrayFromUL("guessList").join(', '),
+        'skipped': String(skip),
+        'filename': String(fileNum++)
     };
     console.log(entry);
     return entry;
 }
-
-socket.on("info", function(teamnum, name) {
-
-});
 
 socket.on("clear", function() {
     console.log("clear");
@@ -207,8 +206,63 @@ socket.on("newDraw", function(dsx, dsy, dcx, dcy, coler) {
 });
 
 socket.on("gameSummary", function (t1_rounds, t2_rounds) {
-    // turn into actual images
+    // make table   
+    let table1 = document.getElementById("t1_table");
+    let table2 = document.getElementById("t2_table");
+    let data1 = Object.keys(t1_rounds[0]);
+    let data2 = Object.keys(t2_rounds[0]);
 
+    // get all images
+    t1_rounds.forEach(entry => {
+        fname = entry['filename'];
+        request(fname,1);
+    });
+
+    t2_rounds.forEach(entry => {
+        fname = entry['filename'];
+        request(fname,2);
+    });
+
+    generateTable(table1, t1_rounds, t1Canvases);
+    // generateTableHead(table1, data1);
+
+    generateTable(table2, t2_rounds, t2Canvases);
+    // generateTableHead(table2, data2);
+});
+
+//   https://www.valentinog.com/blog/html-table/
+function generateTable(table, data, canvi) {
+    for (let element of data) {
+        let row = table.insertRow();
+        for (key in element) {
+            let cell = row.insertCell();
+            if (key == "filename") {
+                console.log('canvi', canvi)
+                cell.appendChild(canvi.shift());
+            } else {
+                let text = document.createTextNode(element[key]);
+                cell.appendChild(text);
+            }
+        }
+    }
+}
+
+function request(filename, tnum) {
+    console.log("requested " + filename);
+    socket.emit('requestImg', filename,tnum)
+}
+
+socket.on('img', function (img, tnum) {
+    console.log("received img from server: " + img);
+    var newCanvas = document.createElement('canvas');
+    newCanvas.src = img;
+    newCanvas.width = "400";
+    newCanvas.height = "400";
+    newCanvas.className = "pastCanvi"
+    newCanvas.style.border = "2px solid";
+    console.log('canvas', newCanvas);
+    if (tnum == 1) {t1Canvases.push(newCanvas);}
+    else {t2Canvases.push(newCanvas);}
 });
 
 function countDown() {
@@ -221,8 +275,8 @@ function countDown() {
         time.innerHTML = "Time Remaining: " + timeLeft;
 
         clearTimeout(timer);
-        document.getElementById("phase2").style = "none";
-        document.getElementById("results").style = "";
+        document.getElementById("phase2").style.display = "none";
+        document.getElementById("results").style.display = "";
 
         socket.emit("gameover")
     }
@@ -252,11 +306,9 @@ function addPlayer() {
     list.appendChild(playerLI);
     socket.emit("setName", name);
     console.log("name sent", name);
-  
 }
 
 function createListItem(listname, val) {
-
     var list = document.getElementById(listname);
     var playerLI = document.createElement("LI");
     playerLI.draggable = "true";
@@ -496,14 +548,11 @@ function generateTableHead(table, data) {
         row.appendChild(th);
     }
 }
-//   https://www.valentinog.com/blog/html-table/
-function generateTable(table, data) {
-    for (let element of data) {
-        let row = table.insertRow();
-        for (key in element) {
-        let cell = row.insertCell();
-        let text = document.createTextNode(element[key]);
-        cell.appendChild(text);
-        }
-    }
+
+
+function send() {
+    var dataURL = canvas.toDataURL();
+    console.log("send image " + dataURL)
+    socket.emit('img', dataURL, filename)
 }
+

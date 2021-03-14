@@ -102,28 +102,52 @@ io.on('connection', function (socket) {
         io.emit("startGame", words, [t1drawer, t2drawer]);
     });
 
-    socket.on("skip", function (entry) {
+    socket.on("skip", function (entry, dataURL) {
+        var teamNUM = 0;
         if (socket.id === t2drawer) {
-            t2_rounds.push(entry);
+            teamNUM = 2;
         } else {
-            t1_rounds.push(entry);
+            teamNUM = 1;
         }
+
+        var t = "team";
+        t = t.concat(String(teamNUM), '-', entry['filename'],".png");
+        console.log("filename", t)
+        entry['filename'] = t
+
+        // save img
+        storeImg(dataURL, t);
+
+        if (teamNUM == 2) {t2_rounds.push(entry);}
+        else {t1_rounds.push(entry);}
 
         io.emit("clear");
     })
 
-    socket.on("correct", function(entry) {
+    socket.on("correct", function(entry, dataURL) {
         if (socket.id === t1drawer) {
             t1score++;
         } else {
             t2score++;
         }
 
+        var teamNUM = 0;
         if (socket.id === t2drawer) {
-            t2_rounds.push(entry);
+            teamNUM = 2;
         } else {
-            t1_rounds.push(entry);
+            teamNUM = 1;
         }
+
+        var t = "team";
+        t = t.concat(String(teamNUM), '-', entry['filename'],".png");
+        console.log("filename", t)
+        entry['filename'] = t
+
+        // save img
+        storeImg(dataURL, t);
+
+        if (teamNUM == 2) {t2_rounds.push(entry);}
+        else {t1_rounds.push(entry);}
 
         io.emit("updateScore", t1score, t2score);
         io.emit("clear");
@@ -154,18 +178,9 @@ io.on('connection', function (socket) {
         socket.emit("gameSummary", t1_rounds, t2_rounds);
     });
 
-    // Listen for image and filename
-    socket.on('img', function (dataURL, filename) {
-        console.log("Received image  " + dataURL)
-        var base64Data = dataURL.replace(/^data:image\/png;base64,/, "");
-
-        fs.writeFile(filename, base64Data, 'base64', function (err) {
-            console.log(err);
-        });
-    })
-
+    
     // Send the requested file
-    socket.on('requestImg', function (filename) {
+    socket.on('requestImg', function (filename,tnum) {
 
         console.log("Client Requests Image " + filename)
         fs.readFile(filename, 'base64', function (err, data) {
@@ -174,12 +189,23 @@ io.on('connection', function (socket) {
                 // Might be a good idea to send a response if the file doesn't exist
                 io.emit('img', "File not found")
             } else {
-                io.emit('img', "data:image/png;base64," + data.toString())
+                io.emit('img', "data:image/png;base64," + data.toString(),tnum)
             }
         });
     });
 
 });
+
+// Listen for image and filename
+function storeImg (dataURL, filename) {
+    // console.log("Received image  " + dataURL)
+    var base64Data = dataURL.replace(/^data:image\/png;base64,/, "");
+
+    fs.writeFile(filename, base64Data, 'base64', function (err) {
+        console.log(err);
+    });
+}
+
 
 function readFromFile(file) {
 	fs.readFile(file, function (err, data) {
