@@ -30,9 +30,6 @@ async function init() {
 
     // DISPLAY LOADING ANIMATION HERE
 
-
-
-
     // Sleep
     // https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep
     await new Promise(r => setTimeout(r, 5000));
@@ -40,10 +37,10 @@ async function init() {
     console.log("waking up")
 
 
-
+    document.getElementById("loader").style.display = "none";
     document.getElementById("enterNameDiv").style.display = "block";
     // SET UP TIMER
-    document.getElementById("timer").innerHTML = `Time Remaining: ${ALLOTED_TIME}`
+    document.getElementById("timer").innerHTML = `Time: ${ALLOTED_TIME}`
 
     // BACKGROUND
     var wall = document.getElementById("wall");
@@ -157,7 +154,7 @@ function sendStart() {
 // Receive Start From Server
 socket.on('startedBy', async function (players, player, randomSeed) {
 
-    document.getElementById("wall").style.backgroundColor = "red"
+    document.getElementById("wall").style.backgroundColor = "#a94d2e"
 
     toggleStartButton();
 
@@ -166,7 +163,7 @@ socket.on('startedBy', async function (players, player, randomSeed) {
 
     updateScoreboard(players)
 
-    document.getElementById("wall").style.backgroundColor = "#edffab"
+    document.getElementById("wall").style.backgroundColor = "#a0b0b0"
     document.getElementById("target").style.display = "block"
 
     if (isPlaying) {
@@ -174,6 +171,9 @@ socket.on('startedBy', async function (players, player, randomSeed) {
 
         radio1.disabled = true;
         radio2.disabled = true;
+
+        bar = document.getElementById("timebar");
+        bar.classList.add("round-time-bar");
 
         move_timer = window.setInterval(moveTarget, MOVE_INTERVAL);
         game_timer = window.setInterval(countDown, 1000);
@@ -193,6 +193,9 @@ socket.on('stoppedBy', function (player) {
 function stop() {
     clearTimeout(move_timer);
     clearTimeout(game_timer);
+
+    bar = document.getElementById("timebar");
+    bar.classList.remove("round-time-bar");
 
     // hide target
     document.getElementById("target").style.display = "none"
@@ -262,11 +265,11 @@ function getRandom(min, max) {
 
 function countDown() {
     var time = document.getElementById("timer");
-    time.innerHTML = "Time Remaining: " + --timeLeft;
+    time.innerHTML = "Time: " + --timeLeft;
     if (timeLeft == 0) {
         clearTimeout(move_timer);
         timeLeft = ALLOTED_TIME;
-        time.innerHTML = "Time Remaining: " + timeLeft;
+        time.innerHTML = "Time: " + timeLeft;
         radio1.disabled = false;
         radio2.disabled = false;
         stop();

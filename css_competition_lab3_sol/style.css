@@ -1,12 +1,22 @@
+:root {
+  --darkBlue: #343e56;
+  --lightBlue: #a0b0b0;
+  --grey: #c5b9bc;
+  --lightGreen: #b1ab87;
+  --red: #a94d2e;
+}
+
 html {
-    height: 100%;
-    margin:0;
-    padding: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 body {
-    height: 100%;
-    margin:0;
-    padding: 0;
+  height: 100%;
+  margin: 10px;
+  padding: 10px;
+  background-color: var(--darkBlue);
+  color: var(--grey);
 }
 nav {
   height: 100%;
@@ -15,55 +25,176 @@ nav {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #C8FFBE;
+  background-color: var(--lightGreen);
   overflow-x: hidden;
   padding: 0px;
   margin: 0px;
+  color: var(--darkBlue)
 }
 
 span {
-  color:red;
+  color: var(--red);
+  left: 50px;
+  position: relative;
+  top: 10px;
 }
 
 /* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_sidenav */
 svg {
-  background-color: #edffab;
+  background-color: var(--lightBlue);
   margin-left: 200px;
 }
 
-lh, span {
-	font-family:Arial;
-	font-size:30px;
+lh,
+span {
+  /* font-family: Arial; */
+  font-size: 30px;
 }
+
+span {
+  right: 30px;
+  position: relative;
+}
+
 li {
-	font-size:25px;
+  font-size: 25px;
+  display: block;
+  border: 2px solid var(--darkBlue);
+  width: 90%;
+  
 }
 li b {
-  color:rgba(206, 255, 223, 0.61);
-}
-li, button {
-	box-shadow:inset 0px -3px 7px 0px #ba9593;
-	background:linear-gradient(to bottom, #89608e 5%, #ba9593 100%);
-	background-color:#edffab;
-	border-radius:3px;
-	border:1px solid #0b0e07;
-	color:#ffffff;
-	font-family:Arial;
+  color: var(--darkBlue);
 }
 
 button {
-	display:inline-block;
-	cursor:pointer;
-	font-size:15px;
-	padding:9px 23px;
+  box-shadow: inset 0px -3px 7px 0px var(--grey);
+  background: linear-gradient(to bottom, var(--grey) 5%, var(--darkBlue) 100%);
+  background-color: var(--red);
+  border-radius: 3px;
+  border: 1px solid #0b0e07;
+  color: #ffffff;
+  font-family: Arial;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 9px 23px;
 }
 button:hover {
-	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
-	background-color:#0688fa;
+  background: linear-gradient(to bottom, #8d8f91 5%, #b6b6b6 100%);
+  background-color: #575858;
 }
 button:active {
-	position:relative;
-	top:1px;
+  position: relative;
+  top: 1px;
 }
 
-        
+#start {
+  margin: auto;
+  right: 30%;
+  position: absolute;
+  top: 23%;
+}
+
+/* new css */
+/* https://www.w3schools.com/css/css_align.asp */
+.center {
+  text-align: center;
+  margin: auto;
+  width: 50%;
+  /* border: 3px solid var(--red); */
+  padding: 10px;
+  /* background-color: var(--lightBlue); */
+}
+
+/* https://www.w3schools.com/css/css_align.asp */
+.center-vertical {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  /* border: 3px solid green;  */
+}
+
+#enterNameDiv {
+  border: 3px solid var(--red);
+}
+
+.center-div {
+  margin: auto;
+  width: 50%;
+  padding: 3px;
+}
+
+.lds-facebook {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-facebook div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: var(--grey);
+  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+.lds-facebook div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-facebook div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-facebook div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0;
+}
+@keyframes lds-facebook {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%,
+  100% {
+    top: 24px;
+    height: 32px;
+  }
+}
+
+h2 {
+  font-family: Georgia, serif;
+}
+
+.round-time-bar {
+  margin: 1rem;
+  overflow: hidden;
+}
+.round-time-bar div {
+  height: 20px;
+  animation: roundtime calc(var(--duration) * 1s) steps(var(--duration))
+    forwards;
+  transform-origin: left center;
+  background: linear-gradient(to bottom, var(--red), #900);
+}
+
+.round-time-bar[data-style="smooth"] div {
+  animation: roundtime calc(var(--duration) * 1s) linear forwards;
+}
+
+.round-time-bar[data-style="fixed"] div {
+  width: calc(var(--duration) * 5%);
+}
+
+.round-time-bar[data-color="blue"] div {
+  background: linear-gradient(to bottom, #64b5f6, #1565c0);
+}
+
+@keyframes roundtime {
+  to {
+    /* More performant than `width` */
+    transform: scaleX(0);
+  }
+}

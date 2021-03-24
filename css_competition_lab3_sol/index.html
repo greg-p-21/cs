@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 3</title>
+    <link rel="icon" type="image/ico" href="dino.ico" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Always include in Node Projects-->
+    <script src="client.js"></script>
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Lab 3</title>
-	<link rel="icon" type="image/png" href="favicon.png">
-	<link rel="stylesheet" href="style.css">
-	<script src="/socket.io/socket.io.js"></script> <!-- Always include in Node Projects-->
-	<script src="client.js"></script>
-</head>
+  <body>
+    <div class="center-vertical" id="loader">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
 
+    <!-- Name Entry -->
+    <div id="enterNameDiv" class="center">
+      <div class="center-div">
+        <h2><u>Enter Name Challenger!</u></h2>
+        <!-- <label>Name:</label> -->
+        <input id="name" type="text" autofocus/>
+        <button type="button" onclick="submitName()">Join Game</button>
+      </div>
+    </div>
 
-<body>
-	<!-- Name Entry -->
-	<div id="enterNameDiv">
-		<label>Name:</label>
-		<input id="name" type="text">
-		<button type="button" onclick="submitName()">Join Game</button>
-	</div>
-	
-	<div id="gameDiv">
+    <div id="gameDiv">
+      <svg id="wall">
+        <circle
+          id="cursor"
+          r="4"
+          stroke="black"
+          stroke-width="6"
+          fill="yellow"
+        />
+        <circle
+          id="target"
+          r="40"
+          stroke="red"
+          stroke-width="4"
+          fill="#202020"
+        />
+      </svg>
 
-		<svg id="wall">
-			<circle id="cursor" r="4" stroke="black" stroke-width="6" fill="yellow" />
-			<circle id="target" r="40" stroke="green" stroke-width="4" fill="yellow" />
-		</svg>
+      <nav class="scoreboard" id="scoreboardDiv">
+        <span id="timer"></span>
+		<div data-style="smooth" style="--duration: 30;" id="timebar">
+			<div></div>
+		</div>
+        <ol class="scoreboard" id="scoreboardList">
+          <lh><u>Scoreboard</u></lh>
+        </ol>
 
-		<nav class="scoreboard" id="scoreboardDiv">
-
-			<span id="timer"></span>
-
-			<ol class="scoreboard" id="scoreboardList">
-				<lh>Scoreboard</lh>
-			</ol>
-
-			<div>
-				<input type="radio" name="gameMode" id="radio1" value="click" onchange="changeMode(this)" checked>
-				<label for="click">Click</label>
-				<input type="radio" name="gameMode" id="radio2" value="mouseover" onchange="changeMode(this)">
-				<label for="click">Touch</label>
-				<button onclick="sendStart()" id="start" type="button">Start</button>
-			</div>
-
-		</nav>
-	</div>
-
-</body>
-
+        <div style="padding-left: 15%;">
+          <input
+            type="radio"
+            name="gameMode"
+            id="radio1"
+            value="click"
+            onchange="changeMode(this)"
+            checked
+          />
+          <label for="click">Click</label>
+          <input
+            type="radio"
+            name="gameMode"
+            id="radio2"
+            value="mouseover"
+            onchange="changeMode(this)"
+          />
+          <label for="click">Touch</label>
+          <button onclick="sendStart()" id="start" type="button">Start</button>
+        </div>
+      </nav>
+    </div>
+  </body>
 </html>

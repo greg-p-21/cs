@@ -1,0 +1,25 @@
+{
+  "name": "css_competition",
+  "version": "1.0.0",
+  "description": "CSS Class competition for IT452 on previous Lab 3",
+  "main": "client.js",
+  "dependencies": {
+    "bootstrap": "^5.0.0-beta2",
+    "popper.js": "^1.12.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greg-p-21/cs.git"
+  },
+  "author": "MIDN 1/C Polmatier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/greg-p-21/cs/issues"
+  },
+  "homepage": "https://github.com/greg-p-21/cs#readme"
+}

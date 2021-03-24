@@ -2,7 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs')
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 15394;
 
 
 app.get('/', function (req, res) {
@@ -11,8 +11,8 @@ app.get('/', function (req, res) {
 app.get('/client.js', function (req, res) {
     res.sendFile(__dirname + '/client.js');
 });
-app.get('/favicon.png', function (req, res) {
-    res.sendFile(__dirname + '/favicon.png');
+app.get('/dino.ico', function (req, res) {
+    res.sendFile(__dirname + '/dino.ico');
 });
 app.get('/style.css', function (req, res) {
     res.sendFile(__dirname + '/style.css');
